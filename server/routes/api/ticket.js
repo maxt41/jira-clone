@@ -50,8 +50,8 @@ async (req, res) => {
 
     try {
         const ticket = findByIdAndUpdate(req.params.id, {summary, reporter, initials, assignee, status, type})
-        return res.status(200).json(ticket)
         await ticket.save()
+        return res.status(200).json(ticket)
     } catch (error) {
         return res.status(500).json({msg: 'An Error Occured'})
     }
