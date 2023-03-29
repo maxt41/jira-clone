@@ -1,0 +1,9 @@
+:root {
+  --background-color: #f8f9fa
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: var(--background-color)
+}
