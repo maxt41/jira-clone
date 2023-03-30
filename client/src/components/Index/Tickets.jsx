@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Paper from '@mui/material/Paper'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
@@ -14,6 +14,14 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Skeleton from '@mui/material/Skeleton';
 import { Link } from 'react-router-dom';
+import IconButton from '@mui/material/IconButton';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import axios from 'axios'
+import { useParams } from 'react-router-dom'
+import CloseIcon from '@mui/icons-material/Close';
+import Snackbar from '@mui/material/Snackbar';
 
 const theme = createTheme({
     palette: {
@@ -21,11 +29,81 @@ const theme = createTheme({
             problem: '#e3483a',
             request: '#63ba3c'
         },
+        close: {
+            main: '#f8f9fa'
+        }
     },
 });
 
+const Tickets = () => {
+    let { id } = useParams()
+    const [issues, setIssues] = useState()
 
-const Tickets = ({ issues }) => {
+    const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
+
+    const [alert, setAlert] = useState(false);
+
+    const handleClickaway = (reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setAlert(false);
+    };
+
+    const handleClick = (e) => {
+        setAnchorEl(e.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleDelete = (id) => {
+        axios.delete(`http://localhost:1000/api/ticket/${id}`)
+            .then(() => {
+                setAlert(true)
+                setIssues()
+            })
+            .catch((error) => {
+                console.error(error)
+            })
+
+        setAnchorEl(null);
+    }
+
+    useEffect(() => {
+        axios.get(`http://localhost:1000/api/tickets`)
+            .then((response) => {
+                if (parseInt(id) === 1) {
+                    setIssues(response.data.filter(x => x.type === 'request'))
+                }
+                if (parseInt(id) === 2) {
+                    setIssues(response.data.filter(x => x.type === 'problem'))
+                }
+                if (parseInt(id) === 3) {
+                    setIssues(response.data)
+                }
+            })
+            .catch((error) => {
+                console.error(error)
+            })
+    }, [id, alert])
+
+    const action = (
+        <React.Fragment>
+            <IconButton
+                size="small"
+                color="close"
+                onClick={handleClickaway}
+            >
+                <CloseIcon fontSize="small" />
+            </IconButton>
+        </React.Fragment>
+    );
+
+
     return (
         <ThemeProvider theme={theme}>
             <TableContainer component={Paper}>
@@ -37,18 +115,19 @@ const Tickets = ({ issues }) => {
                             <TableCell>Reporter</TableCell>
                             <TableCell>Assignee</TableCell>
                             <TableCell>Status</TableCell>
+                            <TableCell>Options</TableCell>
                         </TableRow>
                     </TableHead>
                     {issues ?
                         <TableBody>
                             {issues.map(issue => {
                                 return (
-                                    <TableRow key={issue.id}>
+                                    <TableRow key={issue._id}>
                                         <TableCell>
                                             {(issue.type === 'problem') ? < DisabledByDefaultRoundedIcon sx={{ color: 'icons.problem', maxHeight: '100%' }} /> : null}
                                             {(issue.type === 'request') ? < CheckBoxRoundedIcon sx={{ color: 'icons.request', maxHeight: '100%' }} /> : null}
                                         </TableCell>
-                                        <TableCell><Link to={`/issue/${issue.id}`}>{issue.summary}</Link></TableCell>
+                                        <TableCell><Link to={`/issue/${issue._id}`}>{issue.summary}</Link></TableCell>
                                         <TableCell>{issue.reporter}</TableCell>
                                         <TableCell>
                                             <Stack spacing={1} direction='row' style={{ alignItems: 'center' }} >
@@ -57,6 +136,16 @@ const Tickets = ({ issues }) => {
                                             </Stack>
                                         </TableCell>
                                         <TableCell>{issue.status}</TableCell>
+                                        <TableCell><IconButton onClick={handleClick}><MoreVertIcon /></IconButton></TableCell>
+                                        <Menu
+                                            id="options-menu"
+                                            anchorEl={anchorEl}
+                                            open={open}
+                                            onClose={handleClose}
+                                        >
+                                            <MenuItem onClick={() => handleDelete(issue._id)}>Delete</MenuItem>
+
+                                        </Menu>
                                     </TableRow>
                                 )
                             })}
@@ -70,10 +159,18 @@ const Tickets = ({ issues }) => {
                                 <TableCell><Skeleton variant='text' /></TableCell>
                                 <TableCell><Skeleton variant='text' /></TableCell>
                                 <TableCell><Skeleton variant='text' /></TableCell>
+                                <TableCell><Skeleton variant='text' /></TableCell>
                             </TableRow>
                         </TableBody>}
                 </Table>
             </TableContainer>
+            <Snackbar
+                open={alert}
+                autoHideDuration={5000}
+                onClose={handleClickaway}
+                message="Ticket Deleted"
+                action={action}
+            />
         </ThemeProvider >
     )
 }

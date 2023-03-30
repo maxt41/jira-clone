@@ -9,6 +9,7 @@ app.use(express.json());
 app.use(cors({origin: 'http://localhost:3000'}));
 
 app.use('/api/ticket', require('./routes/api/ticket'))
+app.use('/api/tickets', require('./routes/api/tickets'))
 
 app.set('port', process.env.PORT || 1000);
 

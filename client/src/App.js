@@ -14,7 +14,7 @@ function App() {
         <Route path='/issue/:id' element={
           <TicketView />
         } />    
-        <Route path='*' element={<Navigate to='/queue/:id'></Navigate>} />
+        <Route path='*' element={<Navigate to='/queue/3'></Navigate>} />
       </Routes>
     </BrowserRouter>
  
