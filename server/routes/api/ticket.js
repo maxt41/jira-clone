@@ -20,6 +20,7 @@ router.get('/:id', checkObjectId, async (req, res) => {
 router.post('/',   
 check('summary', 'Summary is required').notEmpty(),
 check('reporter', 'Reporter is required').notEmpty(),
+check('description', 'Description is required').notEmpty(),
 check('initials', 'Initials are required').notEmpty(),
 check('assignee', 'Assignee is required').notEmpty(),
 check('status', 'Status is required').notEmpty(),
@@ -30,9 +31,9 @@ async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const {summary, reporter, initials, assignee, status, type} = req.body
+    const {summary, reporter, description, initials, assignee, status, type} = req.body
     try {
-        const ticket = new Ticket({summary, reporter, initials, assignee, status, type})
+        const ticket = new Ticket({summary, reporter, description, initials, assignee, status, type})
         await ticket.save()
         return res.status(200).json(ticket)
     } catch (error) {
@@ -43,6 +44,7 @@ async (req, res) => {
 
 router.put('/:id', checkObjectId,
 check('summary', 'Summary is required').notEmpty(),
+check('description', 'Description is required').notEmpty(),
 check('reporter', 'Reporter is required').notEmpty(),
 check('initials', 'Initials are required').notEmpty(),
 check('status', 'Status is required').notEmpty(),
@@ -52,10 +54,10 @@ async (req, res) => {
     if (!errors.isEmpty()) {
       return res.status(400).json({errors: errors.array()});
     }
-    const {summary, reporter, initials, assignee, status, type} = req.body
+    const {summary, reporter, description, initials, assignee, status, type} = req.body
 
     try {
-        const ticket = await Ticket.findByIdAndUpdate(req.params.id, {summary, reporter, initials, assignee, status, type})
+        const ticket = await Ticket.findByIdAndUpdate(req.params.id, {summary, description, reporter, initials, assignee, status, type})
         if(!ticket) {
             return res.status(400).json({msg : 'Ticket Not Found'}) 
         }

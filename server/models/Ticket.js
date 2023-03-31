@@ -6,6 +6,9 @@ const TicketScheme = new mongoose.Schema({
         type: String,
         required: true
     },
+    description: {
+        type: String,
+    },
     reporter: {
         type: String,
         required: true

@@ -25,10 +25,10 @@ const Queues = () => {
         <ThemeProvider theme={theme}>
             <Stack spacing={2} >
                 <Typography variant='subtitle' color='buttons' fontWeight='bold'>Queues</Typography>
-
                 <Button color='buttons' style={{ justifyContent: 'space-between', textTransform: 'none' }} onClick={() => navigate(`/queue/1`)}>Requests Queue </Button>
                 <Button color='buttons' style={{ justifyContent: 'space-between', textTransform: 'none' }} onClick={() => navigate(`/queue/2`)}>Problems Queue</Button>
                 <Button color='buttons' style={{ justifyContent: 'space-between', textTransform: 'none' }} onClick={() => navigate(`/queue/3`)}>All Tickets</Button>
+                <Button color='buttons' style={{ justifyContent: 'space-between', textTransform: 'none' }} >Create Ticket</Button>
             </Stack>
         </ThemeProvider>
     )
