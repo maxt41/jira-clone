@@ -5,6 +5,7 @@ import CardContent from '@mui/material/CardContent';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 
+
 const Ticket = () => {
     let { id } = useParams();
     const [ticket, setTicket] = useState({})
@@ -22,9 +23,9 @@ const Ticket = () => {
     return (
         <Card>
             <CardContent>
-                <Typography variant='h4'>{ticket.summary}</Typography>
+                <Typography variant='h5' fontWeight='bold'>{ticket.summary}</Typography>
                 <Typography variant='subtitle'>Raised by: {ticket.reporter}</Typography>
-                <Typography variant='h5'>Description</Typography>
+                <Typography variant='h6' fontWeight='bold'>Description</Typography>
                 <Typography variant='body'>{ticket.description}</Typography>
             </CardContent>
         </Card>

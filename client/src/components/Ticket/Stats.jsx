@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
-
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
@@ -18,12 +19,41 @@ const Stats = () => {
     let { id } = useParams();
     const [ticket, setTicket] = useState({})
     const [date, setDate] = useState('')
+    const [anchorEl, setAnchorEl] = useState(null);
+    const menu = Boolean(anchorEl);
+    const [assigned, setAssigned] = useState(undefined)
+
+    const handleMenu = (e) => {
+        setAnchorEl(e.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
 
     const [open, setOpen] = useState(true);
 
     const handleClick = () => {
         setOpen(!open);
     };
+
+    useEffect(() => {
+        if (assigned) {
+            const initialsArray = assigned.split(' ')
+            const initials = ([initialsArray[0][0], initialsArray[1][0]]).join('')
+            axios.put(`http://localhost:1000/api/ticket/${id}`,
+                { assignee: assigned, initials })
+                .then(() => {
+                    setAssigned()
+                    setAnchorEl(null);
+                })
+                .catch((error) => {
+                    console.error(error)
+                })
+        }
+
+    }, [assigned])
+
 
     useEffect(() => {
         axios.get(`http://localhost:1000/api/ticket/${id}`)
@@ -36,7 +66,7 @@ const Stats = () => {
             .catch((error) => {
                 console.error(error)
             })
-    }, [id])
+    }, [id, assigned])
 
     return (
         <Card>
@@ -49,9 +79,16 @@ const Stats = () => {
                     {open ? <Divider /> : null}
                     <Collapse in={open} unmountOnExit>
                         <List disablePadding>
-                            <ListItemButton sx={{ pl: 4 }}>
+                            <ListItemButton sx={{ pl: 4 }} onClick={handleMenu}>
                                 <ListItemText primary="Assignee" secondary={ticket.assignee} />
                             </ListItemButton>
+                            <Menu
+                                anchorEl={anchorEl}
+                                open={menu}
+                                onClose={handleClose}
+                            >
+                                <MenuItem onClick={() => setAssigned('IT Support')}>IT Support</MenuItem>
+                            </Menu>
                             {open ? <Divider /> : null}
                             <ListItemButton sx={{ pl: 4 }}>
                                 <ListItemText primary="Status" secondary={ticket.status} />

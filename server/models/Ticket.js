@@ -15,11 +15,9 @@ const TicketScheme = new mongoose.Schema({
     },
     initials: {
         type: String,
-        required: true
     },
     assignee: {
         type: String,
-        required: true
     },
     status: {
         type: String,

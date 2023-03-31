@@ -21,8 +21,6 @@ router.post('/',
 check('summary', 'Summary is required').notEmpty(),
 check('reporter', 'Reporter is required').notEmpty(),
 check('description', 'Description is required').notEmpty(),
-check('initials', 'Initials are required').notEmpty(),
-check('assignee', 'Assignee is required').notEmpty(),
 check('status', 'Status is required').notEmpty(),
 check('type', 'Type is required').notEmpty(),
 async (req, res) => {
@@ -35,7 +33,7 @@ async (req, res) => {
     try {
         const ticket = new Ticket({summary, reporter, description, initials, assignee, status, type})
         await ticket.save()
-        return res.status(200).json(ticket)
+        return res.status(200).json({msg: 'Ticket Created'})
     } catch (error) {
         console.error(error)
         return res.status(500).json({msg: 'An Error Occured'})
@@ -43,12 +41,6 @@ async (req, res) => {
 })
 
 router.put('/:id', checkObjectId,
-check('summary', 'Summary is required').notEmpty(),
-check('description', 'Description is required').notEmpty(),
-check('reporter', 'Reporter is required').notEmpty(),
-check('initials', 'Initials are required').notEmpty(),
-check('status', 'Status is required').notEmpty(),
-check('type', 'Type is required').notEmpty(),
 async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

@@ -15,9 +15,6 @@ import TableRow from '@mui/material/TableRow';
 import Skeleton from '@mui/material/Skeleton';
 import { Link } from 'react-router-dom';
 import IconButton from '@mui/material/IconButton';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
 import axios from 'axios'
 import { useParams } from 'react-router-dom'
 import CloseIcon from '@mui/icons-material/Close';
@@ -39,9 +36,6 @@ const Tickets = () => {
     let { id } = useParams()
     const [issues, setIssues] = useState()
 
-    const [anchorEl, setAnchorEl] = useState(null);
-    const open = Boolean(anchorEl);
-
     const [alert, setAlert] = useState(false);
 
     const handleClickaway = (reason) => {
@@ -51,27 +45,6 @@ const Tickets = () => {
 
         setAlert(false);
     };
-
-    const handleClick = (e) => {
-        setAnchorEl(e.currentTarget);
-    };
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-
-    const handleDelete = (id) => {
-        axios.delete(`http://localhost:1000/api/ticket/${id}`)
-            .then(() => {
-                setAlert(true)
-                setIssues()
-            })
-            .catch((error) => {
-                console.error(error)
-            })
-
-        setAnchorEl(null);
-    }
 
     useEffect(() => {
         axios.get(`http://localhost:1000/api/tickets`)
@@ -115,7 +88,6 @@ const Tickets = () => {
                             <TableCell>Reporter</TableCell>
                             <TableCell>Assignee</TableCell>
                             <TableCell>Status</TableCell>
-                            <TableCell>Options</TableCell>
                         </TableRow>
                     </TableHead>
                     {issues ?
@@ -136,16 +108,6 @@ const Tickets = () => {
                                             </Stack>
                                         </TableCell>
                                         <TableCell>{issue.status}</TableCell>
-                                        <TableCell><IconButton onClick={handleClick}><MoreVertIcon /></IconButton></TableCell>
-                                        <Menu
-                                            id="options-menu"
-                                            anchorEl={anchorEl}
-                                            open={open}
-                                            onClose={handleClose}
-                                        >
-                                            <MenuItem onClick={() => handleDelete(issue._id)}>Delete</MenuItem>
-
-                                        </Menu>
                                     </TableRow>
                                 )
                             })}
